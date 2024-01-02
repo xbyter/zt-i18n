@@ -1,22 +1,22 @@
 <?php
 
-namespace ZtI18nTests;
+namespace Ztphp\I18n\Tests;
 
-use PHPUnit\Framework\TestCase;
-use ZtI18n\Enum\LangEnum;
-use ZtI18n\Loaders\JsonFileLoader;
-use ZtI18n\I18nClient;
-use ZtI18n\I18nDiff;
-use ZtI18n\KeyParsers\DotKeyParser;
-use ZtI18n\KeyParsers\PrefixKeyParser;
+use Ztphp\I18n\Enum\LangEnum;
+use Ztphp\I18n\Loaders\JsonFileLoader;
+use Ztphp\I18n\I18nClient;
+use Ztphp\I18n\I18nDiff;
+use Ztphp\I18n\KeyParsers\DotKeyParser;
+use Ztphp\I18n\KeyParsers\PrefixKeyParser;
 
-class I18nClientTest extends TestCase
+class I18nClientTest extends BaseTest
 {
     public function testDefaultKeyJsonGet()
     {
         $dir = __DIR__ . '/../storage';
         $loader = new JsonFileLoader($dir);
         $client = new I18nClient($loader);
+        $client->setCache($this->cache, 60);
         $data = $client->get('1010001', ['a','b','c']);
         var_dump($data);
     }
@@ -26,6 +26,7 @@ class I18nClientTest extends TestCase
         $dir = __DIR__ . '/../storage';
         $loader = new JsonFileLoader($dir);
         $client = new I18nClient($loader);
+        $client->setCache($this->cache, 60);
         $client->setKeyParser(new PrefixKeyParser(4, 'other'));
         $data = $client->get('1010001', ['a','b','c']);
         var_dump($data);
@@ -37,6 +38,7 @@ class I18nClientTest extends TestCase
         $dir = __DIR__ . '/../storage';
         $loader = new JsonFileLoader($dir);
         $client = new I18nClient($loader);
+        $client->setCache($this->cache, 60);
         $client->setKeyParser(new DotKeyParser('.', 'other'));
         $data = $client->get('1010001', ['a','b','c']);
         var_dump($data);

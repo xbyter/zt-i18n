@@ -5,7 +5,7 @@
  * @Description: 根据截取前缀来分目录，适用于固定规则的key。如1010XXX代表商品，1020XXX代表订单
  */
 
-namespace ZtI18n\KeyParsers;
+namespace Ztphp\I18n\KeyParsers;
 
 class PrefixKeyParser extends BaseKeyParser
 {

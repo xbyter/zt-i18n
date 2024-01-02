@@ -1,21 +1,25 @@
 <?php
 
-namespace ZtI18n\Laravel\Providers;
+namespace Ztphp\I18n\Laravel\Providers;
 
 use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
+use Psr\SimpleCache\CacheInterface;
 use Xbyter\ApolloClient\ApolloClient;
 use Xbyter\ApolloClient\ApolloConfig;
-use ZtI18n\Laravel\Commands\I18nSyncArtisan;
-use ZtI18n\Loaders\FallbackLoaderInterface;
-use ZtI18n\Loaders\JsonFileLoader;
-use ZtI18n\Loaders\LoaderInterface;
-use ZtI18n\StoreDrivers\JsonFileStore;
-use ZtI18n\I18nApolloSync;
-use ZtI18n\I18nClient;
-use ZtI18n\I18nClientInterface;
-use ZtI18n\I18nSyncInterface;
+use Ztphp\I18n\Caches\I18nCacheInterface;
+use Ztphp\I18n\Caches\I18nLaravelCache;
+use Ztphp\I18n\Laravel\Commands\I18nSyncArtisan;
+use Ztphp\I18n\Loaders\FallbackLoaderInterface;
+use Ztphp\I18n\Loaders\JsonFileLoader;
+use Ztphp\I18n\Loaders\LoaderInterface;
+use Ztphp\I18n\Stores\JsonFileStore;
+use Ztphp\I18n\I18nApolloSync;
+use Ztphp\I18n\I18nClient;
+use Ztphp\I18n\I18nClientInterface;
+use Ztphp\I18n\I18nSyncInterface;
 
 class I18nServiceProvider extends ServiceProvider implements DeferrableProvider
 {
@@ -30,6 +34,8 @@ class I18nServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->registerLoader();
         //注册i18n备用加载器，当默认加载器找不到key时使用备用加载器
         $this->registerFallbackLoader();
+        //注册缓存管理，用于报错多语言缓存。缓存找不到会从本地文件找
+        $this->registerCache();
         //注册i18n客户端, 可以根据key来获取多语言
         $this->registerClient();
         //注册i18n同步器，同步i18n服务器数据到本地
@@ -73,6 +79,18 @@ class I18nServiceProvider extends ServiceProvider implements DeferrableProvider
         });
     }
 
+
+    /**
+     * 注册缓存管理，用于报错多语言缓存。缓存找不到会从本地文件找
+     * @return void
+     */
+    protected function registerCache()
+    {
+        $this->app->singleton(I18nCacheInterface::class, function () {
+            return new I18nLaravelCache(Cache::getStore());
+        });
+    }
+
     /**
      * 注册i18n客户端
      * @return void
@@ -83,6 +101,9 @@ class I18nServiceProvider extends ServiceProvider implements DeferrableProvider
             $client = new I18nClient($this->app->make(LoaderInterface::class));
             $client->setFallbackLoader($this->app->make(FallbackLoaderInterface::class));
             $client->setLang($this->app->getLocale());
+            if ($this->isUseCache()) {
+                $client->setCache($this->app->make(I18nCacheInterface::class));
+            }
             return $client;
         });
     }
@@ -100,7 +121,11 @@ class I18nServiceProvider extends ServiceProvider implements DeferrableProvider
             $dir = $this->getConfig('i18n.server_resource_dir');
             $store = new JsonFileStore($dir);
 
+            $cacheExpirationSeconds = $this->getConfig('i18n.cache_expiration_seconds');
             $sync = new I18nApolloSync($apolloClient, $store);
+            if ($this->isUseCache()) {
+                $sync->setCache($this->app->make(I18nCacheInterface::class), $cacheExpirationSeconds);
+            }
             $namespacePrefix = $this->getConfig('i18n.apollo.namespace_prefix');
             foreach ($languages as $language) {
                 $sync->addNamespace($language, "{$namespacePrefix}-{$language}");
@@ -144,6 +169,11 @@ class I18nServiceProvider extends ServiceProvider implements DeferrableProvider
         /** @var ConfigContract $config */
         $config = $this->app->make('config');
         return $config->get($key);
+    }
+
+    protected function isUseCache(): bool
+    {
+        return $this->getConfig('i18n.cache');
     }
 
     /**

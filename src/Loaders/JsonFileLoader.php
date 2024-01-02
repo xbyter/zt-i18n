@@ -5,7 +5,7 @@
  * @Description: JSON翻译文件载入
  */
 
-namespace ZtI18n\Loaders;
+namespace Ztphp\I18n\Loaders;
 
 
 class JsonFileLoader implements LoaderInterface, FallbackLoaderInterface
@@ -26,11 +26,10 @@ class JsonFileLoader implements LoaderInterface, FallbackLoaderInterface
      */
     public function load(string $lang, string $group = null): array
     {
-        $filename = "{$lang}.json";
         if ($group) {
-            return $this->loadFile($this->dir . "/{$group}/{$filename}");
+            return $this->loadFile($this->dir . "/{$lang}/{$group}.json");
         }
-        return $this->loadFile($this->dir . "/{$filename}");
+        return $this->loadFile($this->dir . "/{$lang}.json}");
     }
 
     protected function loadFile(string $path): array

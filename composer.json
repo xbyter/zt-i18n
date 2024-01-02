@@ -16,20 +16,23 @@
     "phpunit/phpunit": "^6.5.6 || ^7.0 || ^9.6",
     "illuminate/console": "^5.5 || ^6.0",
     "illuminate/routing": "^5.5 || ^6.0",
-    "illuminate/container": "^5.5 || ^6.0"
+    "illuminate/container": "^5.5 || ^6.0",
+    "illuminate/cache": "^5.5 || ^6.0",
+    "ext-redis": "*"
   },
   "autoload": {
     "psr-4": {
-      "ZtI18n\\": "src/"
+      "Ztphp\\I18n\\": "src/"
     },
     "files":["src/Laravel/function.php"]
   },
   "autoload-dev": {
     "psr-4": {
-      "ZtI18nTests\\": "tests/"
+      "Ztphp\\I18n\\Tests\\": "tests/"
     }
   },
   "config": {
+    "secure-http": false,
     "allow-plugins": {
       "kylekatarnls/update-helper": true
     }
@@ -37,7 +40,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "ZtI18n\\Laravel\\Providers\\I18nServiceProvider"
+        "Ztphp\\I18n\\Laravel\\Providers\\I18nServiceProvider"
       ]
     }
   }

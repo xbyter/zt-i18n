@@ -6,7 +6,7 @@
  */
 
 
-namespace ZtI18n;
+namespace Ztphp\I18n;
 
 
 class I18nDiff

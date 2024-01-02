@@ -1,10 +1,10 @@
 <?php
 
-namespace ZtI18n;
+namespace Ztphp\I18n;
 
 use Xbyter\ApolloClient\ApolloConfigsResp;
 use Xbyter\ApolloClient\Handlers\HandlerInterface;
-use ZtI18n\StoreDrivers\StoreInterface;
+use Ztphp\I18n\Stores\StoreInterface;
 
 class ApolloStoreHandler implements HandlerInterface
 {

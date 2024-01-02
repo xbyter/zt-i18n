@@ -1,9 +1,9 @@
 <?php
 
-namespace ZtI18n\Laravel\Commands;
+namespace Ztphp\I18n\Laravel\Commands;
 
 use Illuminate\Console\Command;
-use ZtI18n\I18nSyncInterface;
+use Ztphp\I18n\I18nSyncInterface;
 
 class I18nSyncArtisan extends Command
 {

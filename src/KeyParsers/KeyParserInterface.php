@@ -1,6 +1,6 @@
 <?php
 
-namespace ZtI18n\KeyParsers;
+namespace Ztphp\I18n\KeyParsers;
 
 interface KeyParserInterface
 {

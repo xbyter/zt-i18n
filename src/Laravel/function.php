@@ -1,6 +1,6 @@
 <?php
 
-use ZtI18n\I18nClientInterface;
+use Ztphp\I18n\I18nClientInterface;
 
 if (!function_exists('i')) {
     function i(string $key, array $replace = []): string

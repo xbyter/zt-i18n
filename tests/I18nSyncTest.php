@@ -1,20 +1,19 @@
 <?php
 
-namespace ZtI18nTests;
+namespace Ztphp\I18n\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Xbyter\ApolloClient\ApolloClient;
-use Xbyter\ApolloClient\ApolloConfig;
 use Xbyter\ApolloClient\ApolloConfigsResp;
-use ZtI18n\StoreDrivers\JsonFileStore;
-use ZtI18n\KeyParsers\DotKeyParser;
-use ZtI18n\KeyParsers\PrefixKeyParser;
-use ZtI18n\I18nApolloSync;
+use Ztphp\I18n\Stores\JsonFileStore;
+use Ztphp\I18n\KeyParsers\DotKeyParser;
+use Ztphp\I18n\KeyParsers\PrefixKeyParser;
+use Ztphp\I18n\I18nApolloSync;
 
-class I18nSyncTest extends TestCase
+class I18nSyncTest extends BaseTest
 {
     protected function getApolloClient(): ApolloClient
     {
+        //MOCK数据
         $apolloConfigsResp = $this->getConfigsMockData();
         $apolloClient = $this->createMock(ApolloClient::class);
         $apolloClient->method('configs')->willReturn($apolloConfigsResp);
@@ -26,7 +25,7 @@ class I18nSyncTest extends TestCase
         $apolloConfigsResp = new ApolloConfigsResp();
         $apolloConfigsResp->appId = 'i18n-error-config';
         $apolloConfigsResp->cluster = 'default';
-        $apolloConfigsResp->namespaceName = 'fbg-eld-api-zh-CN';
+        $apolloConfigsResp->namespaceName = 'i18n-zh-CN';
         $apolloConfigsResp->releaseKey = '';
         $apolloConfigsResp->configurations = [
             '1010001' => '{0}=创建订单[{1}]失败=!:{2}',
@@ -48,6 +47,7 @@ class I18nSyncTest extends TestCase
         $dir = __DIR__ . '/../storage';
         $store = new JsonFileStore($dir);
         $sync = new I18nApolloSync($apolloClient, $store);
+        $sync->setCache($this->cache, 60);
         $sync->addNamespace('zh-CN', 'fbg-eld-api-zh-CN')
             ->addNamespace('en-US', 'fbg-eld-api-en-US')
             ->syncOnce();
@@ -66,6 +66,7 @@ class I18nSyncTest extends TestCase
         $store = new JsonFileStore($dir);
         $store->setKeyParser(new PrefixKeyParser(4, 'other'));
         $sync = new I18nApolloSync($apolloClient, $store);
+        $sync->setCache($this->cache, 60);
         $sync->addNamespace('zh-CN', 'fbg-eld-api-zh-CN')
             ->addNamespace('en-US', 'fbg-eld-api-en-US')
             ->syncOnce();
@@ -83,6 +84,7 @@ class I18nSyncTest extends TestCase
         $store->setKeyParser(new DotKeyParser('.', 'other'));
 
         $sync = new I18nApolloSync($apolloClient, $store);
+        $sync->setCache($this->cache, 60);
         $sync->addNamespace('zh-CN', 'fbg-eld-api-zh-CN')
             ->addNamespace('en-US', 'fbg-eld-api-en-US')
             ->syncOnce();

@@ -5,9 +5,9 @@
  * @Description: JSON格式保存
  */
 
-namespace ZtI18n\StoreDrivers;
+namespace Ztphp\I18n\Stores;
 
-use ZtI18n\KeyParsers\KeyParserInterface;
+use Ztphp\I18n\KeyParsers\KeyParserInterface;
 
 class JsonFileStore implements StoreInterface
 {
@@ -34,7 +34,6 @@ class JsonFileStore implements StoreInterface
 
     public function store(array $keyValueMap, string $lang)
     {
-
         //获取阿波罗多语言内容并解析group
         $data = [];
         foreach ($keyValueMap as $key => $value) {
@@ -46,24 +45,29 @@ class JsonFileStore implements StoreInterface
 
         //按group目录写入
         foreach ($data as $group => $langData) {
-            $dir = $this->buildDir($this->dir, $group);
+            $dir = $this->buildDir($this->dir, $group, $lang);
             if (!is_dir($dir)) {
                 mkdir($dir, 0777, true);
             }
-
             $filename = $this->buildFilename($lang, $group);
             $path = "{$dir}/{$filename}";
             file_put_contents($path, json_encode($langData, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
         }
     }
 
-    protected function buildDir(string $dir, string $group): string
+    protected function buildDir(string $dir, string $group, string $lang): string
     {
-        return $dir . ($group ? "/$group" : "");
+        if ($group) {
+            return $dir . "/" . $lang;
+        }
+        return $dir;
     }
 
     protected function buildFilename(string $lang, string $group): string
     {
+        if ($group) {
+            return "{$group}.json";
+        }
         return "{$lang}.json";
     }
 }

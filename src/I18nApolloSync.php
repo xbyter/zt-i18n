@@ -5,11 +5,12 @@
  * @DescrserverIption: 从阿波罗同步翻译
  */
 
-namespace ZtI18n;
+namespace Ztphp\I18n;
 
 use Xbyter\ApolloClient\ApolloClient;
 use Xbyter\ApolloClient\ApolloConfigSync;
-use ZtI18n\StoreDrivers\StoreInterface;
+use Ztphp\I18n\Caches\I18nCacheInterface;
+use Ztphp\I18n\Stores\StoreInterface;
 
 class I18nApolloSync implements I18nSyncInterface
 {
@@ -18,6 +19,12 @@ class I18nApolloSync implements I18nSyncInterface
 
     /** @var StoreInterface $store */
     protected $store;
+
+    /** @var I18nCacheInterface */
+    protected $cache;
+
+    /** @var int 过期秒数，0为永不过期 */
+    protected $expirationSeconds;
 
     /** @var array<string, string> */
     protected $langNamespaces = [];
@@ -54,6 +61,19 @@ class I18nApolloSync implements I18nSyncInterface
         return $this;
     }
 
+    /**
+     * 设置缓存
+     * @param I18nCacheInterface $cache
+     * @param int $expirationSeconds
+     * @return $this
+     */
+    public function setCache(I18nCacheInterface $cache, int $expirationSeconds = 3600): self
+    {
+        $this->cache = $cache;
+        $this->expirationSeconds = $expirationSeconds;
+        return $this;
+    }
+
 
     /**
      * 构建阿波罗同步客户端类
@@ -65,8 +85,12 @@ class I18nApolloSync implements I18nSyncInterface
         $sync = new ApolloConfigSync($this->apolloClient);
         foreach ($this->langNamespaces as $lang => $namespace) {
             $handler = new ApolloStoreHandler($this->store, $lang);
-
             $sync->addHandler($namespace, $handler);
+
+            if ($this->cache) {
+                $cacheHandler = new ApolloCacheHandler($this->cache, $this->expirationSeconds, $lang);
+                $sync->addHandler($namespace, $cacheHandler);
+            }
         }
         return $sync;
     }

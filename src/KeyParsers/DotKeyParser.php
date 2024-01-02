@@ -5,7 +5,7 @@
  * @Description: 根据小数点来来分目录，如order.forbidden，product.not_found
  */
 
-namespace ZtI18n\KeyParsers;
+namespace Ztphp\I18n\KeyParsers;
 
 class DotKeyParser extends BaseKeyParser
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace ZtI18n\Loaders;
+namespace Ztphp\I18n\Loaders;
 
 
 interface LoaderInterface

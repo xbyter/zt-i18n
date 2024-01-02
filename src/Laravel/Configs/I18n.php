@@ -6,6 +6,9 @@ return [
     'local_resource_dir'  => resource_path('lang'),
     //站点支持的语言
     'languages'           => ['zh-CN', 'en-US'],
+    //是否使用缓存，默认使用laravel缓存
+    'cache' => true,
+    'cache_expiration_seconds' => 3600 * 30,
     //阿波罗配置，用于从阿波罗里同步多语言
     'apollo'              => [
         //命名空间前缀, 完整的命名空间格式为namespace_prefix + '-' + lang，例如fbg-eld-api-zh-CN

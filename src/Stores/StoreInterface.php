@@ -1,6 +1,6 @@
 <?php
 
-namespace ZtI18n\StoreDrivers;
+namespace Ztphp\I18n\Stores;
 
 
 

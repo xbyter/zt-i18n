@@ -1,6 +1,6 @@
 <?php
 
-namespace ZtI18n\Laravel\Controllers;
+namespace Ztphp\I18n\Laravel\Controllers;
 
 
 use Illuminate\Container\Container;
@@ -9,9 +9,9 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use ZtI18n\Loaders\FallbackLoaderInterface;
-use ZtI18n\Loaders\LoaderInterface;
-use ZtI18n\I18nDiff;
+use Ztphp\I18n\Loaders\FallbackLoaderInterface;
+use Ztphp\I18n\Loaders\LoaderInterface;
+use Ztphp\I18n\I18nDiff;
 
 class I18nController extends Controller
 {

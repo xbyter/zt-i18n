@@ -1,6 +1,6 @@
 <?php
 
-namespace ZtI18n\Enum;
+namespace Ztphp\I18n\Enum;
 
 
 class LangEnum

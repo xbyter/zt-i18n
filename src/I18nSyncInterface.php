@@ -1,6 +1,6 @@
 <?php
 
-namespace ZtI18n;
+namespace Ztphp\I18n;
 
 interface I18nSyncInterface
 {
