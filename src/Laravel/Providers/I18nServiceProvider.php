@@ -102,7 +102,8 @@ class I18nServiceProvider extends ServiceProvider implements DeferrableProvider
             $client->setFallbackLoader($this->app->make(FallbackLoaderInterface::class));
             $client->setLang($this->app->getLocale());
             if ($this->isUseCache()) {
-                $client->setCache($this->app->make(I18nCacheInterface::class));
+                $cacheExpirationSeconds = $this->getConfig('i18n.cache_expiration_seconds');
+                $client->setCache($this->app->make(I18nCacheInterface::class), $cacheExpirationSeconds);
             }
             return $client;
         });
@@ -121,9 +122,9 @@ class I18nServiceProvider extends ServiceProvider implements DeferrableProvider
             $dir = $this->getConfig('i18n.server_resource_dir');
             $store = new JsonFileStore($dir);
 
-            $cacheExpirationSeconds = $this->getConfig('i18n.cache_expiration_seconds');
             $sync = new I18nApolloSync($apolloClient, $store);
             if ($this->isUseCache()) {
+                $cacheExpirationSeconds = $this->getConfig('i18n.cache_expiration_seconds');
                 $sync->setCache($this->app->make(I18nCacheInterface::class), $cacheExpirationSeconds);
             }
             $namespacePrefix = $this->getConfig('i18n.apollo.namespace_prefix');
